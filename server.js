@@ -3,6 +3,8 @@ const querystring = require('querystring');
 const discord = require('discord.js');
 const client = new discord.Client();
 
+// glitchからリポジトリの変更を取得するテスト
+
 http.createServer(function(req, res){
   if (req.method == 'POST'){
     var data = "";
