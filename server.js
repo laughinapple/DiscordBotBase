@@ -42,7 +42,7 @@ client.on('message', message =>{
     return;
   }
   if(message.isMemberMentioned(client.user)){
-    sendReply(message, "呼びましたか？");
+    sendReply(message, "呼びましたか？→2021/8/8 変更しました");
     return;
   }
   if (message.content.match(/にゃ～ん|にゃーん/)){
