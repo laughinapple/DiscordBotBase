@@ -2,8 +2,7 @@ const http = require('http');
 const querystring = require('querystring');
 const discord = require('discord.js');
 const client = new discord.Client();
-
-// glitchからリポジトリの変更を取得するテスト
+const features = require("./features/features");
 
 http.createServer(function (req, res) {
   if (req.method == 'POST') {
@@ -45,13 +44,27 @@ client.on('message', message => {
 
   // 自分宛メンションの場合
   if (message.isMemberMentioned(client.user)) {
-    // @everyone なら反応しない
+    // @everyone @here なら反応しない
     if (message.mentions.everyone) {
       return;
     }
 
+    // 全functionsの正規表現と比較して当てはまる機能を実行する
+    let didSomeFeatureMatch = false;
+    features.forEach((feature) => {
+      if (message.content.match(feature.pattern)) {
+        // ひとまず run メソッドに message オブジェクトを食わせる設計とする
+        // ひとまず sendReply は生き残して run は string を返させる設計とする
+        sendReply(message, feature.run(message));
+        didSomeFeatureMatch = true;
+      }
+    });
+
     // いずれの条件にも当てはまらない場合
-    sendReply(message, "呼びましたか？");
+    if (!didSomeFeatureMatch) {
+      sendReply(message, "呼びましたか？");
+    }
+
     return;
   }
 
