@@ -5,20 +5,20 @@ const client = new discord.Client();
 
 // glitchからリポジトリの変更を取得するテスト
 
-http.createServer(function(req, res){
-  if (req.method == 'POST'){
+http.createServer(function (req, res) {
+  if (req.method == 'POST') {
     var data = "";
-    req.on('data', function(chunk){
+    req.on('data', function (chunk) {
       data += chunk;
     });
-    req.on('end', function(){
-      if(!data){
+    req.on('end', function () {
+      if (!data) {
         res.end("No post data");
         return;
       }
       var dataObject = querystring.parse(data);
       console.log("post:" + dataObject.type);
-      if(dataObject.type == "wake"){
+      if (dataObject.type == "wake") {
         console.log("Woke up in post");
         res.end();
         return;
@@ -26,25 +26,25 @@ http.createServer(function(req, res){
       res.end();
     });
   }
-  else if (req.method == 'GET'){
-    res.writeHead(200, {'Content-Type': 'text/plain'});
+  else if (req.method == 'GET') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Discord Bot is active now\n');
   }
 }).listen(3000);
 
-client.on('ready', message =>{
+client.on('ready', message => {
   console.log('Bot準備完了～');
   client.user.setPresence({ activity: { name: 'げーむ' } });
 });
 
-client.on('message', message =>{
+client.on('message', message => {
   // 自分自身か他のbotのメッセージはスルー
-  if (message.author.id == client.user.id || message.author.bot){
+  if (message.author.id == client.user.id || message.author.bot) {
     return;
   }
 
   // 自分宛メンションの場合
-  if(message.isMemberMentioned(client.user)){
+  if (message.isMemberMentioned(client.user)) {
     // @everyone なら反応しない
     if (message.mentions.everyone) {
       return;
@@ -57,27 +57,27 @@ client.on('message', message =>{
 
   // メンションでないメッセージへの反応
   // 「にゃ～ん」「にゃーん」が含まれている場合
-  if (message.content.match(/にゃ～ん|にゃーん/)){
+  if (message.content.match(/にゃ～ん|にゃーん/)) {
     let text = "にゃ～ん";
     sendMsg(message.channel.id, text);
     return;
   }
 });
 
-if(process.env.DISCORD_BOT_TOKEN == undefined){
- console.log('DISCORD_BOT_TOKENが設定されていません。');
- process.exit(0);
+if (process.env.DISCORD_BOT_TOKEN == undefined) {
+  console.log('DISCORD_BOT_TOKENが設定されていません。');
+  process.exit(0);
 }
 
-client.login( process.env.DISCORD_BOT_TOKEN );
+client.login(process.env.DISCORD_BOT_TOKEN);
 
-function sendReply(message, text){
+function sendReply(message, text) {
   message.reply(text)
     .then(console.log("リプライ送信: " + text))
     .catch(console.error);
 }
 
-function sendMsg(channelId, text, option={}){
+function sendMsg(channelId, text, option = {}) {
   client.channels.get(channelId).send(text, option)
     .then(console.log("メッセージ送信: " + text + JSON.stringify(option)))
     .catch(console.error);
