@@ -38,13 +38,25 @@ client.on('ready', message =>{
 });
 
 client.on('message', message =>{
+  // 自分自身か他のbotのメッセージはスルー
   if (message.author.id == client.user.id || message.author.bot){
     return;
   }
+
+  // 自分宛メンションの場合
   if(message.isMemberMentioned(client.user)){
-    sendReply(message, "呼びましたか？→2021/8/8 変更しました");
+    // @everyone なら反応しない
+    if (message.mentions.everyone) {
+      return;
+    }
+
+    // いずれの条件にも当てはまらない場合
+    sendReply(message, "呼びましたか？");
     return;
   }
+
+  // メンションでないメッセージへの反応
+  // 「にゃ～ん」「にゃーん」が含まれている場合
   if (message.content.match(/にゃ～ん|にゃーん/)){
     let text = "にゃ～ん";
     sendMsg(message.channel.id, text);
